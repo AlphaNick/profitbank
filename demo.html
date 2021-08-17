@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compound Demo - CompoundDemo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" href="/">CompoundDemo</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Home/ForecastResults">Demo</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            
+<div class="d-flex flex-column">
+
+    <div class="content d-block p2">
+        <div class="content-content row">
+            <div id="ValidationSummary" class="alert alert-danger" style="display:none;"></div>
+            <div class="col-sm-12 col-md-4">
+                <div class="">
+                    <div class="form-group">
+                        <label for="investment" class="control-label">Capital Investment</label>
+                        <div class="pt-2">
+                            <div id="investment-slider"></div>
+                            <div id="investment-result"></div>
+                            <div id="investment-result d-none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="NoOfDays" class="control-label">No. of Days</label>
+                        <div class="pt-2">
+                            <div id="noOfDays-slider"></div>
+                            <div id="noOfDays-result"></div>
+                            <div id="noOfDays-result d-none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="PercentageGain" class="control-label">Est. Percentage Gain</label>
+                        <div class="pt-2">
+                            <div id="percentage-gain-slider"></div>
+                            <div id="percentage-gain-result"></div>
+                            <div id="percentage-gain-final-result d-none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="buttons">
+                        <input type="button" class="btn btn-info" id="ShowForecast" value="Show Forecast" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="">
+                    <div class="form-group">
+                        <label class="control-label" id="Results"></label>
+                    </div>
+                    <div class="form-group">
+                        <table class="table table-responsive table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl table-sm table-striped" id="TransactionResults" style="display:none;">
+                            <thead id="thead">
+                            </thead>
+                            <tbody id="tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - CompoundDemo
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script type="text/javascript">
+
+        var investmentCount = 1;
+
+        $(document).ready(function () {
+            
+            // Percentage Gain Slider
+            $("#percentage-gain-slider").slider({
+                min: 0.1,
+                max: 10,
+                step: 0.1,
+                value: 0.5
+            });
+            $("#percentage-gain-result").html($("#percentage-gain-slider").slider("value"));
+            $("#percentage-gain-slider").on( "slidechange", function( event, ui ) {
+                $("#percentage-gain-final-result").html(ui.value);
+            } );
+            $( "#percentage-gain-slider" ).on( "slide", function( event, ui ) {
+                $("#percentage-gain-result").html(ui.value);
+            } );
+
+            // No of Days Slider
+            $("#noOfDays-slider").slider({
+                min: 90,
+                max: 1000,
+                step: 1,
+                value: 365
+            });
+            $("#noOfDays-result").html($("#noOfDays-slider").slider("value"));
+            $("#noOfDays-slider").on( "slidechange", function( event, ui ) {
+                $("#noOfDays-final-result").html(ui.value);
+            } );
+            $( "#noOfDays-slider" ).on( "slide", function( event, ui ) {
+                $("#noOfDays-result").html(ui.value);
+            } );
+
+            // Capital Investment Slider
+            $("#investment-slider").slider({
+                min: 500,
+                max: 100000,
+                step: 500,
+                value: 10000
+            });
+            $("#investment-result").html($("#investment-slider").slider("value"));
+            $("#investment-slider").on( "slidechange", function( event, ui ) {
+                $("#investment-final-result").html(ui.value);
+            } );
+            $( "#investment-slider" ).on( "slide", function( event, ui ) {
+                $("#investment-result").html(ui.value);
+            } );
+
+            $('#ShowForecast').click(function () {
+
+                // calculate the results
+                //var capitalFund = Number.parseFloat($("#CapitalFund").val());
+                //var percentageGain = Number.parseFloat($("#PercentageGain").val());
+                //var noOfDays = Number.parseFloat($("#NoOfDays").val());
+                var capitalFund = Number.parseFloat($("#investment-slider").slider("value"));
+                var percentageGain = Number.parseFloat($("#percentage-gain-slider").slider("value"));
+                var noOfDays = Number.parseFloat($("#noOfDays-slider").slider("value"));
+
+                var dividendPercentage = 50;//$("#DividendPercentage").val(); 
+                var developmentPercentage = 40; //$("#DevelopmentPercentage").val(); 
+                var ownerPercentage = 10; // $("#OwnerPercentage").val();
+                // for the calculation
+                var startDate = new Date();
+                var nextDate = new Date();
+                var endDate = new Date();
+                endDate = new Date(endDate.setDate(endDate.getDate() + noOfDays));
+                var newInvestment = capitalFund;
+                var percentageGain = percentageGain / 100;
+
+                var transactions = [];
+                while (nextDate < endDate)
+                {
+                    var transaction = new Object();
+                    transaction.investment = newInvestment;
+                    transaction.gain = newInvestment * percentageGain;
+                    transaction.compoundTotal = newInvestment + (newInvestment * percentageGain);
+                    transaction.date = nextDate;
+                    transactions.push(transaction);
+
+                    newInvestment = transaction.compoundTotal;
+                    nextDate = new Date(nextDate.setDate(nextDate.getDate() + 1));
+                }
+
+                var data = new Object();
+                data.transactions = transactions;
+                data.totalProfit = newInvestment - capitalFund;
+                data.totalPayout = newInvestment;
+                data.percentageProfit = ((newInvestment - capitalFund) / capitalFund) * 100;
+                data.dividendPayout = newInvestment * (dividendPercentage / 100);
+                data.developmentPayout = newInvestment * (developmentPercentage / 100);
+                data.ownerPayout = newInvestment * (ownerPercentage / 100);
+
+                // now display the data
+                //console.log(data);
+                var options = {
+                    style: 'currency', 
+                    currency: 'GBP',
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2
+                }    
+                $("#Results").html("Total Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.totalPayout) + "</strong><br />");
+                $("#Results").append("Total Profit: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.totalProfit) + "</strong><br />");
+                $("#Results").append("Total Profit Percentage: <strong>" + new Intl.NumberFormat('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.percentageProfit) + "%</strong><br />");
+                $("#Results").append("Dividend Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.dividendPayout) + "</strong><br />");
+                $("#Results").append("Development Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.developmentPayout) + "</strong><br />");
+                $("#Results").append("Owner Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.ownerPayout) + "</strong><br />");
+                $("#Results").append("<br/>Full results below...");
+
+                $('#thead').html('<tr style="white-space:nowrap"><th>Transaction Date</th><th>Investment</th><th>Gain</th><th>Compound Total</th></tr>');
+                $("#tbody").html('');
+                var tbody = '';
+                $.each(data.transactions, function (i, item) {
+                    tbody += '<tr><td>' + item.date.toLocaleDateString('en-GB') + '</td>' +
+                        '<td>' + new Intl.NumberFormat('en-GB', options).format(item.investment) + '</td>' +
+                        '<td>' + new Intl.NumberFormat('en-GB', options).format(item.gain) + '</td>' +
+                        '<td>' + new Intl.NumberFormat('en-GB', options).format(item.compoundTotal) + '</td></tr>';
+                });
+                $("#tbody").append(tbody);
+
+                $("#TransactionResults").show();
+                $("#Results").get(0).scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // $('#ShowForecast2').click(function () {
+
+            //     $.getJSON("/Home/GetForecast", {
+            //         capitalFund: $("#CapitalFund").val(), percentageGain: $("#PercentageGain").val(), noOfDays: $("#NoOfDays").val(), dividendPercentage: $("#DividendPercentage").val(),
+            //         developmentPercentage: $("#DevelopmentPercentage").val(), ownerPercentage: $("#OwnerPercentage").val()
+            //     }, function (data) {
+
+            //         console.log(data);
+            //         var options = {
+            //             style: 'currency', 
+            //             currency: 'GBP',
+            //             minimumFractionDigits: 2, 
+            //             maximumFractionDigits: 2
+            //         }    
+            //         $("#Results").html("Total Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.totalPayout) + "</strong><br />");
+            //         $("#Results").append("Total Profit: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.totalProfit) + "</strong><br />");
+            //         $("#Results").append("Total Profit Percentage: <strong>" + new Intl.NumberFormat('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.percentageProfit) + "%</strong><br />");
+            //         $("#Results").append("Dividend Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.dividendPayout) + "</strong><br />");
+            //         $("#Results").append("Development Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.developmentPayout) + "</strong><br />");
+            //         $("#Results").append("Owner Payout: <strong>" + new Intl.NumberFormat('en-GB', options).format(data.ownerPayout) + "</strong><br />");
+            //         $("#Results").append("<br/>Full results below...");
+
+            //         $('#thead').html('<tr style="white-space:nowrap"><th>Transaction Date</th><th>Investment</th><th>Gain</th><th>Compound Total</th></tr>');
+            //         $("#tbody").html('');
+            //         var tbody = '';
+            //         $.each(data.bond.transactions, function (i, item) {
+            //             tbody += '<tr><td>' + item.dateDisplay + '</td>' +
+            //                 '<td>' + new Intl.NumberFormat('en-GB', options).format(item.investment) + '</td>' +
+            //                 '<td>' + new Intl.NumberFormat('en-GB', options).format(item.gain) + '</td>' +
+            //                 '<td>' + new Intl.NumberFormat('en-GB', options).format(item.compoundTotal) + '</td></tr>';
+            //         });
+            //         $("#tbody").append(tbody);
+
+            //         $("#TransactionResults").show();
+            //         $("#Results").get(0).scrollIntoView({ behavior: 'smooth' });
+
+            //     })
+            // });
+        });
+
+    </script>
+
+</body>
+</html>
